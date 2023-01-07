@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  cais-nginx:
+    image: nginx:alpine
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    networks:
+      - cais-nginx-network
+networks:
+  cais-nginx-network:
+    external: true

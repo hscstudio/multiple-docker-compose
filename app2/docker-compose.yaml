@@ -1,0 +1,38 @@
+version: "3.7"
+
+volumes:
+  db2:
+    driver: local
+
+services:
+  db2:
+    container_name: db2
+    image: mariadb:10.6
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: db2-pwd
+      TZ: Asia/Jakarta
+    volumes:
+      - db2:/var/lib/mysql
+    networks:
+      - cais-nginx-network # proxy and app must be in same network
+
+  phpmyadmin1:
+    container_name: app2
+    depends_on:
+      - db2
+    image: phpmyadmin
+    restart: always
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=db2
+      - PMA_PORT=3306
+      - PMA_ABSOLUTE_URI=/app2/
+    networks:
+      - cais-nginx-network # proxy and app must be in same network
+      - app2-network # you can use additional networks for some stuff
+
+networks:
+  cais-nginx-network:
+    external: true
+  app2-network: ~ # this network won't be accessible from outside
